@@ -16,7 +16,11 @@ interface DevAIProps {
   currentView: 'home' | 'terms' | 'privacy';
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const getAI = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+  return new GoogleGenAI({ apiKey });
+};
 
 const navFunctionDeclaration: FunctionDeclaration = {
   name: "navigate",
@@ -61,6 +65,13 @@ export default function DevAI({ onNavigate, onSwitchView, currentView }: DevAIPr
     setIsLoading(true);
 
     try {
+      const ai = getAI();
+      if (!ai) {
+        setMessages(prev => [...prev, { role: 'assistant', text: "The AI assistant is currently offline because the API key is not configured. Please contact the administrator." }]);
+        setIsLoading(false);
+        return;
+      }
+
       const chat = ai.chats.create({
         model: "gemini-3-flash-preview",
         config: {

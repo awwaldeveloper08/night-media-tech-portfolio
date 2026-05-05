@@ -65,9 +65,12 @@ export default function App() {
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll);
+    document.body.classList.add('has-custom-cursor');
+    
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
+      document.body.classList.remove('has-custom-cursor');
     };
   }, []);
 
